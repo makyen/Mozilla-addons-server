@@ -76,7 +76,7 @@ class TestUserProfileSerializer(TestPublicUserProfileSerializer):
         assert data['read_dev_agreement'] == data['last_login']
 
 
-class TestUserNotificationSerializer(BaseTestCase):
+class TestUserNotificationSerializer(TestCase):
 
     def setUp(self):
         self.user = user_factory()
