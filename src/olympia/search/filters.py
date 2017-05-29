@@ -3,8 +3,10 @@ from django.utils import translation
 from elasticsearch_dsl import Q, query
 from rest_framework import serializers
 from rest_framework.filters import BaseFilterBackend
+import waffle
 
 from olympia import amo
+from olympia.addons.indexers import WEBEXTENSIONS_WEIGHT
 from olympia.constants.categories import CATEGORIES, CATEGORIES_BY_ID
 from olympia.versions.compare import version_int
 
@@ -266,10 +268,20 @@ class SearchQueryFilter(BaseFilterBackend):
         secondary_should = self.secondary_should_rules(search_query, analyzer)
 
         # We alter scoring depending on the "boost" field which is defined in
-        # the mapping (used to boost public addons higher than the rest).
+        # the mapping (used to boost public addons higher than the rest) and,
+        # if the waffle switch is on, whether or an addon is a webextension.
         functions = [
             query.SF('field_value_factor', field='boost'),
         ]
+        if waffle.switch_is_active('boost-webextensions-in-search'):
+            functions.append(
+                query.SF({
+                    'weight': WEBEXTENSIONS_WEIGHT,
+                    'filter': F(
+                        'term',
+                        **{'current_version.files.is_webextension': True})
+                })
+            )
 
         # Assemble everything together and return the search "queryset".
         return qs.query(

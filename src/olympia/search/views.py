@@ -3,13 +3,16 @@ from django.db.models import Q
 from django.db.transaction import non_atomic_requests
 from django.utils import translation
 from django.utils.encoding import force_bytes
-from django.utils.translation import ugettext as _
+from django.utils.translation import ugettext
 from django.views.decorators.vary import vary_on_headers
+
+import waffle
 
 import olympia.core.logger
 from olympia import amo
 from olympia.bandwagon.views import get_filter as get_filter_view
 from olympia.browse.views import personas_listing as personas_listing_view
+from olympia.addons.indexers import WEBEXTENSIONS_WEIGHT
 from olympia.addons.models import Addon, Category
 from olympia.amo.decorators import json_view
 from olympia.amo.helpers import locale_url, urlparams
@@ -176,6 +179,16 @@ class BaseAjaxSearch(object):
             elif len(q) > 2:
                 qs = (Addon.search_public()
                       .query(or_=name_only_query(q.lower())))
+                if waffle.switch_is_active('boost-webextensions-in-search'):
+                    qs = qs.score({
+                        # Boost webextensions if the waffle switch is enabled.
+                        'weight': WEBEXTENSIONS_WEIGHT,
+                        'filter': {
+                            'term': {
+                                'current_version.files.is_webextension': True
+                            }
+                        }
+                    })
             if qs:
                 results = qs.filter(type__in=self.types)
         return results
@@ -269,7 +282,7 @@ def _build_suggestions(request, cat, suggester):
                 if q_ in name_ or word_matches:
                     results.append({
                         'id': a.id,
-                        'name': _(u'{0} Add-ons').format(a.pretty),
+                        'name': ugettext(u'{0} Add-ons').format(a.pretty),
                         'url': locale_url(a.short),
                         'cls': 'app ' + a.short
                     })
@@ -330,7 +343,6 @@ def name_query(q):
     # * Look for phrase matches inside the description using language
     #   specific analyzer (boost=0.1).
     # * Look for matches inside tags (boost=0.1).
-
     tag_should = []
 
     for tag in q.split():
@@ -460,6 +472,12 @@ def search(request, tag_name=None):
                      appversions={'terms': {'field': appversion_field}},
                      categories={'terms': {'field': 'category', 'size': 200}})
           )
+    if waffle.switch_is_active('boost-webextensions-in-search'):
+        qs = qs.score({
+            # Boost webextensions if the waffle switch is enabled.
+            'weight': WEBEXTENSIONS_WEIGHT,
+            'filter': {'term': {'current_version.files.is_webextension': True}}
+        })
 
     filters = ['atype', 'appver', 'cat', 'sort', 'tag', 'platform']
     mapping = {'users': '-average_daily_users',
@@ -535,7 +553,7 @@ def category_sidebar(request, form_data, aggregations):
 
     rv = []
     cat_params = {'cat': None}
-    all_label = _(u'All Add-ons')
+    all_label = ugettext(u'All Add-ons')
 
     rv = [FacetLink(all_label, {'atype': None, 'cat': None}, not qatype)]
 
@@ -565,7 +583,8 @@ def version_sidebar(request, form_data, aggregations):
     exclude_versions = getattr(request.APP, 'exclude_versions', [])
     # L10n: {0} is an application, such as Firefox. This means "any version of
     # Firefox."
-    rv = [FacetLink(_(u'Any {0}').format(app), {'appver': 'any'}, not appver)]
+    rv = [FacetLink(
+        ugettext(u'Any {0}').format(app), {'appver': 'any'}, not appver)]
     vs = [dict_from_int(f['key']) for f in aggregations['appversions']]
 
     # Insert the filtered app version even if it's not a facet.
@@ -600,7 +619,7 @@ def platform_sidebar(request, form_data):
         app_platforms.append(selected)
 
     # L10n: "All Systems" means show everything regardless of platform.
-    rv = [FacetLink(_(u'All Systems'), {'platform': ALL.shortname},
+    rv = [FacetLink(ugettext(u'All Systems'), {'platform': ALL.shortname},
                     selected == ALL)]
     for platform in app_platforms:
         rv.append(FacetLink(platform.name, {'platform': platform.shortname},
@@ -611,8 +630,9 @@ def platform_sidebar(request, form_data):
 def tag_sidebar(request, form_data, aggregations):
     qtag = form_data.get('tag')
     tags = [facet['key'] for facet in aggregations['tags']]
-    rv = [FacetLink(_(u'All Tags'), {'tag': None}, not qtag)]
+    rv = [FacetLink(ugettext(u'All Tags'), {'tag': None}, not qtag)]
     rv += [FacetLink(tag, {'tag': tag}, tag == qtag) for tag in tags]
+
     if qtag and qtag not in tags:
         rv += [FacetLink(qtag, {'tag': qtag}, True)]
     return rv

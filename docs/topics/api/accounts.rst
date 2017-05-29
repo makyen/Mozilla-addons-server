@@ -73,6 +73,76 @@ This endpoint is a shortcut to your own account. It returns an :ref:`account obj
 .. http:get:: /api/v3/accounts/profile/
 
 
+----
+Edit
+----
+
+.. _`account-edit`:
+
+.. note::
+    This API requires :doc:`authentication <auth>` and `Users:Edit`
+    permission to edit accounts other than your own.
+
+This endpoint allows some of the details for an account to be updated.  Any fields
+in the :ref:`account <account-object>` (or :ref:`self <account-object-self>`)
+but not listed below are not editable and will be ignored in the patch request.
+
+.. http:patch:: /api/v3/accounts/account/(int:user_id|string:username)/
+
+    .. _account-edit-request:
+
+    :<json string|null biography: More details about the user.  No links are allowed.
+    :<json string|null display_name: The name chosen by the user.
+    :<json string|null homepage: The user's website.
+    :<json string|null location: The location of the user.
+    :<json string|null occupation: The occupation of the user.
+    :<json string|null username: username to be used in the account url.  The username can only contain letters, numbers, underscores or hyphens. All-number usernames are prohibited as they conflict with user-ids.
+
+
+-------------------
+Uploading a picture
+-------------------
+
+To upload a picture for the profile the request must be sent as content-type `multipart/form-data` instead of JSON.
+Images must be either PNG or JPG; the maximum file size is 4MB.
+Other :ref:`editable values <account-edit-request>` can be set at the same time.
+
+.. http:patch:: /api/v3/accounts/account/(int:user_id|string:username)/
+
+    **Request:**
+
+    .. sourcecode:: bash
+
+        curl "https://addons.mozilla.org/api/v3/accounts/account/12345/"
+            -g -XPATCH --form "picture_upload=@photo.png"
+            -H "Authorization: Bearer <token>"
+
+    :param user-id: The numeric user id.
+    :form picture_upload: The user's picture to upload.
+    :reqheader Content-Type: multipart/form-data
+
+
+------
+Delete
+------
+
+.. _`account-delete`:
+
+.. note::
+    This API requires :doc:`authentication <auth>` and `Users:Edit`
+    permission to delete accounts other than your own.
+
+.. note::
+    Accounts of users who are authors of Add-ons can't be deleted.
+    All Add-ons (and Themes) must be deleted or transfered to other users first.
+
+This endpoint allows the account to be deleted. The reviews and ratings
+created by the user will not be deleted; but all the user's details are
+cleared.
+
+.. http:delete:: /api/v3/accounts/account/(int:user_id|string:username)/
+
+
 ----------------
 Collections List
 ----------------
@@ -137,6 +207,45 @@ This endpoint lists the add-ons in a collection, together with collector's notes
     :>json string|object|null results[].notes: The collectors notes for this item. (See :ref:`translated fields <api-overview-translations>`).
     :>json int results[].downloads: The downloads that occured via this collection.
 
+
+------------------
+Notifications List
+------------------
+
+.. _notification-list:
+
+.. note::
+    This API requires :doc:`authentication <auth>` and `Users:Edit`
+    permission to list notifications on accounts other than your own.
+
+This endpoint allows you to list the account notifications set for the specified user.
+The result is an unpaginated list of the fields below. There are currently 11 notification types.
+
+.. http:get:: /api/v3/accounts/account/(int:user_id|string:username)/notifications/
+
+    :>json string name: The notification short name.
+    :>json boolean enabled: If the notification is enabled (defaults to True).
+    :>json boolean mandatory: If the notification can be set by the user.
+
+
+--------------------
+Notifications Update
+--------------------
+
+.. _`notification-update`:
+
+.. note::
+    This API requires :doc:`authentication <auth>` and `Users:Edit`
+    permission to set notification preferences on accounts other than your own.
+
+This endpoint allows account notifications to be set or updated. The request should be a dict of `name`:True|False pairs.
+Any number of notifications can be changed; only non-mandatory notifications can be changed - attempting to set a mandatory notification will return an error.
+
+.. http:post:: /api/v3/accounts/account/(int:user_id|string:username)/notifications/
+
+    .. _notification-update-request:
+
+    :<json boolean <name>: Is the notification enabled?
 
 
 --------------
