@@ -376,20 +376,17 @@ class TestES(ESTestCaseWithAddons):
         assert len(qs) == 1
 
     def test_values_result(self):
-        addons = [{'id': [a.id], 'slug': [a.slug]} for a in self._addons]
+        addons = [{'id': a.id, 'slug': a.slug} for a in self._addons]
         qs = Addon.search().values_dict('slug').order_by('id')
         assert list(qs) == addons
 
     def test_values_dict_result(self):
-        addons = [{'id': [a.id], 'slug': [a.slug]} for a in self._addons]
+        addons = [{'id': a.id, 'slug': a.slug} for a in self._addons]
         qs = Addon.search().values_dict('slug').order_by('id')
         assert list(qs) == list(addons)
 
     def test_empty_values_dict_result(self):
-        qs = Addon.search().values_dict()
-        # Look for some of the keys we expect.
-        for key in ('id', 'name', 'status', 'app'):
-            assert key in qs[0].keys(), qs[0].keys()
+        assert qs[0].keys() == ['id']
 
     def test_object_result(self):
         qs = Addon.search().filter(id=self._addons[0].id)[:1]
