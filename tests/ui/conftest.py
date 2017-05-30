@@ -359,3 +359,17 @@ def jwt_token(base_url, jwt_issuer, jwt_secret):
         'iat': datetime.datetime.utcnow(),
         'exp': datetime.datetime.utcnow() + datetime.timedelta(seconds=30)}
     return jwt.encode(payload, jwt_secret, algorithm='HS256')
+
+
+@pytest.fixture
+def es_test():
+    stop_es_mocks()
+    call_command(
+        'reindex',
+        wipe=True,
+        noinput=True,
+    )
+
+    yield
+
+    start_es_mocks()
