@@ -386,6 +386,7 @@ class TestES(ESTestCaseWithAddons):
         assert list(qs) == list(addons)
 
     def test_empty_values_dict_result(self):
+        qs = Addon.search().values_dict()
         assert qs[0].keys() == ['id']
 
     def test_object_result(self):
