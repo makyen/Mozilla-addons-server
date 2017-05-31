@@ -72,7 +72,8 @@ def create_new_index(alias, new_index, stdout=sys.stdout):
     get_modules()[alias].create_new_index(new_index)
 
 
-@task(ignore_result=False, timeout=time_limits['hard'], soft_timeout=time_limits['soft'])
+@task(ignore_result=False, timeout=time_limits['hard'],
+      soft_timeout=time_limits['soft'])
 def index_data(alias, index, stdout=sys.stdout):
     log('Reindexing {0}'.format(index), stdout=stdout)
     get_modules()[alias].reindex(index)
