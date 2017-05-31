@@ -6,7 +6,7 @@ from pages.desktop.home import Home
 @pytest.mark.smoke
 @pytest.mark.nondestructive
 def test_that_searching_for_addon_returns_addon_as_first_result(
-        my_base_url, selenium, es_test, addon):
+        es_test, my_base_url, selenium, addon):
     """Test searching for an addon returns the addon."""
     page = Home(selenium, my_base_url).open()
     name = str(
@@ -22,7 +22,7 @@ def test_that_searching_for_addon_returns_addon_as_first_result(
     ['Most Users', 'users'],
     ['Top Rated', 'rating']])
 def test_sorting_by(
-        my_base_url, selenium, es_test, addon, minimal_addon, category, sort_attr):
+        es_test, my_base_url, selenium, addon, minimal_addon, category, sort_attr):
     """Test searching for an addon and sorting."""
     page = Home(selenium, my_base_url).open()
     name = str(
