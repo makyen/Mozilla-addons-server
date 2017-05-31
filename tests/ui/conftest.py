@@ -366,6 +366,9 @@ def jwt_token(base_url, jwt_issuer, jwt_secret):
 def es_test():
     from olympia.amo.tests import start_es_mocks, stop_es_mocks
 
+    if not pytestconfig.option.usingliveserver:
+        return
+
     stop_es_mocks()
 
     ESTestCase.tearDownClass()
