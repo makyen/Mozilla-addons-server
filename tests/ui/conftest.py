@@ -18,6 +18,7 @@ from olympia.amo.tests import (
     create_switch,
     user_factory,
     version_factory,
+    ESTestCase,
 )
 from olympia.constants.applications import APPS, FIREFOX
 from olympia.constants.base import (
@@ -363,15 +364,13 @@ def jwt_token(base_url, jwt_issuer, jwt_secret):
 
 @pytest.fixture
 def es_test():
-    from olympia.amo.tests import stop_es_mocks, start_es_mocks
+    from olympia.amo.tests import start_es_mocks
 
-    stop_es_mocks()
-    call_command(
-        'reindex',
-        wipe=True,
-        noinput=True,
-    )
+    ESTestCase.setUpClass()
+    ESTestCase.setUpTestData()
+    ESTestCase.reindex()
 
     yield
 
+    ESTestCase.tearDownClass()
     start_es_mocks()
