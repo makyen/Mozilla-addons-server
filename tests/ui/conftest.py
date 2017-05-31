@@ -369,7 +369,6 @@ def es_test(pytestconfig):
     if not pytestconfig.option.usingliveserver:
         return
 
-
     stop_es_mocks()
 
     ESTestCase.setUpClass()
