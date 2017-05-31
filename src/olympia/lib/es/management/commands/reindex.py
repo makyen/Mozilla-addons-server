@@ -65,20 +65,20 @@ def update_aliases(actions, stdout=sys.stdout):
     ES.indices.update_aliases({'actions': actions})
 
 
-@task
+@task(ignore_result=False)
 def create_new_index(alias, new_index, stdout=sys.stdout):
     log('Create the index {0}, for alias: {1}'.format(new_index, alias),
         stdout=stdout)
     get_modules()[alias].create_new_index(new_index)
 
 
-@task(timeout=time_limits['hard'], soft_timeout=time_limits['soft'])
+@task(ignore_result=False, timeout=time_limits['hard'], soft_timeout=time_limits['soft'])
 def index_data(alias, index, stdout=sys.stdout):
     log('Reindexing {0}'.format(index), stdout=stdout)
     get_modules()[alias].reindex(index)
 
 
-@task
+@task(ignore_result=False)
 def flag_database(new_index, old_index, alias, stdout=sys.stdout):
     """Flags the database to indicate that the reindexing has started."""
     log('Flagging the database to start the reindexation', stdout=stdout)
