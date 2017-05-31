@@ -1033,3 +1033,29 @@ def safe_exec(string, value=None, globals_=None, locals_=None):
         else:
             raise AssertionError('Could not exec %r: %s' % (string.strip(), e))
     return locals_
+
+
+def prefix_indexes(config):
+    """Prefix all ES index names and cache keys with `test_` and, if running
+    under xdist, the ID of the current slave.
+
+    Note that this is a pytest helper that is primarily used in conftest.
+    """
+    if hasattr(config, 'slaveinput'):
+        prefix = 'test_{[slaveid]}'.format(config.slaveinput)
+    else:
+        prefix = 'test'
+
+    # Ideally, this should be a session-scoped fixture that gets injected into
+    # any test that requires ES. This would be especially useful, as it would
+    # allow xdist to transparently group all ES tests into a single process.
+    # Unfurtunately, it's surprisingly difficult to achieve with our current
+    # unittest-based setup.
+
+    for key, index in settings.ES_INDEXES.items():
+        if not index.startswith(prefix):
+            settings.ES_INDEXES[key] = '{prefix}_amo_{index}'.format(
+                prefix=prefix, index=index)
+
+    settings.CACHE_PREFIX = 'amo:{0}:'.format(prefix)
+    settings.KEY_PREFIX = settings.CACHE_PREFIX

@@ -363,7 +363,7 @@ def jwt_token(base_url, jwt_issuer, jwt_secret):
 
 
 def pytest_configure(config):
-    from ...conftest import prefix_indexes
+    from olympia.amo.tests import prefix_indexes
 
     prefix_indexes(config)
 
