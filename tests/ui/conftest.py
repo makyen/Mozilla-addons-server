@@ -363,7 +363,7 @@ def jwt_token(base_url, jwt_issuer, jwt_secret):
 
 
 @pytest.fixture(scope='session')
-def es_test(pytestconfig):
+def es_test(pytestconfig, transactional_db):
     from olympia.amo.tests import start_es_mocks, stop_es_mocks
 
     stop_es_mocks()
