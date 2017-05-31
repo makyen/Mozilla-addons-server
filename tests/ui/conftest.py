@@ -362,6 +362,12 @@ def jwt_token(base_url, jwt_issuer, jwt_secret):
     return jwt.encode(payload, jwt_secret, algorithm='HS256')
 
 
+def pytest_configure(config):
+    from ...conftest import prefix_indexes
+
+    prefix_indexes(config)
+
+
 @pytest.fixture(scope='function')
 def es_test(pytestconfig, transactional_db):
     from olympia.amo.tests import start_es_mocks, stop_es_mocks
@@ -369,7 +375,6 @@ def es_test(pytestconfig, transactional_db):
     stop_es_mocks()
 
     ESTestCase.setUpClass()
-    ESTestCase.setUpTestData()
     ESTestCase.reindex()
 
     yield
