@@ -371,7 +371,6 @@ def es_test(pytestconfig):
 
     stop_es_mocks()
 
-    ESTestCase.tearDownClass()
     ESTestCase.setUpClass()
     ESTestCase.setUpTestData()
     ESTestCase.reindex()
