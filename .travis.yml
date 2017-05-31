@@ -9,16 +9,16 @@ env:
     - DISPLAY=:99.0
   matrix:
   - TOXENV=ui-tests
-  # - TOXENV=flake8
-  # - TOXENV=docs
-  # - TOXENV=assets
-  # - TOXENV=es
-  # - TOXENV=addons
-  # - TOXENV=devhub
-  # - TOXENV=editors
-  # - TOXENV=amo
-  # - TOXENV=users
-  # - TOXENV=main
+  - TOXENV=flake8
+  - TOXENV=docs
+  - TOXENV=assets
+  - TOXENV=es
+  - TOXENV=addons
+  - TOXENV=devhub
+  - TOXENV=editors
+  - TOXENV=amo
+  - TOXENV=users
+  - TOXENV=main
 
 cache:
   pip: true
