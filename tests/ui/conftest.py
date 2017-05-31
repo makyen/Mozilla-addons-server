@@ -375,7 +375,6 @@ def es_test(pytestconfig, transactional_db):
     stop_es_mocks()
 
     ESTestCase.setUpClass()
-    ESTestCase.reindex()
 
     yield
 
