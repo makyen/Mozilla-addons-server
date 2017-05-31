@@ -362,7 +362,7 @@ def jwt_token(base_url, jwt_issuer, jwt_secret):
     return jwt.encode(payload, jwt_secret, algorithm='HS256')
 
 
-@pytest.fixture(scope='session')
+@pytest.fixture(scope='function')
 def es_test(pytestconfig):
     from olympia.amo.tests import start_es_mocks, stop_es_mocks
 
