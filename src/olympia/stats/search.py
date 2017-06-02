@@ -154,7 +154,8 @@ def create_new_index(index_name=None):
 
 
 def reindex(index_name):
-    call_command('index_stats', index=index_name)
+    from olympia.stats.management.commands.index_stats import index_stats
+    index_stats(index_name)
 
 
 def get_mappings():
