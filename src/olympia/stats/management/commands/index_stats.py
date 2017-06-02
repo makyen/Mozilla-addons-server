@@ -110,4 +110,4 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kw):
         addons, dates, index = kw['addons'], kw['date'], kw['index']
-        index_stats(addons, dates, index)
+        index_stats(index=index, addons=addons, dates=dates)
