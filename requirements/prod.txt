@@ -225,8 +225,8 @@ django-session-csrf==0.7.1 \
     --hash=sha256:ff8c10e30d312c77fc6a6db7710e22b9383e28c03b7fe958876ca96f39aa6cf2
 django-statsd-mozilla==0.3.16 \
     --hash=sha256:925f0f13e5a1e7863e5ed1179fd0f6f1a519e5a0293714ba76745286aad7ed02
-django-tables2==1.6.1 \
-    --hash=sha256:d5d3ad99580121f7ec46ea9e2420069bbd6d2f33b4fde73a376c6bf27d551146
+django-tables2==1.7.1 \
+    --hash=sha256:e47937694e8616c313519df9f790436d763c0fd07812af49b9892013d2588f4f
 django-waffle==0.11.1 \
     --hash=sha256:d135816e416c5846aff1928634513f89cc83af4e939e2007e4a9707ef20d7c02 \
     --hash=sha256:68d246e6f5562309f05c2743ae536b2569933e7d8ed65ecf3606e7a780968b68
@@ -268,7 +268,7 @@ feedparser==5.2.1 \
     --hash=sha256:bd030652c2d08532c034c27fcd7c85868e7fa3cb2b17f230a44a6bbc92519bf9 \
     --hash=sha256:cd2485472e41471632ed3029d44033ee420ad0b57111db95c240c9160a85831c
 flufl.lock==2.4.1 \
-    --hash=sha256:72639aca3ef0379aef125c7346b042691c3452152843f301801b3c2ddcac1032
+    --hash=sha256:72639aca3ef0379aef125c7346b042691c3452152843f301801b3c2ddcac1032 # pyup: <=3.0
 # funcsigs is required by mock
 funcsigs==1.0.2 \
     --hash=sha256:330cc27ccbf7f1e992e69fef78261dc7c6569012cf397db8d3de0234e6c937ca \
@@ -367,9 +367,9 @@ pyquery==1.2.17 \
     --hash=sha256:554335a65570b4871051320a30919836f7548dbb2f2616d6e1f7c3f887096ef3 \
     --hash=sha256:6aa0133b30d9a0229ad65d3a7708c4e853bf46808fb359d06ca56f5039102af6
 # pytest is required by amo-validator
-pytest==3.1.0 \
-    --hash=sha256:ac9378a549dd491fd7e468a1310983b7b7dee4894621384cfc9e101b148f4e11 \
-    --hash=sha256:239c71f1804b57b07806f315752b42f675ddf3109a11ebe8d40eef043db12a83
+pytest==3.1.1 \
+    --hash=sha256:765ce3acfff504c6c31e3c024c97dd57c8caa9b0cacd5ec3d0ef4c646a1ddf04 \
+    --hash=sha256:0173a366a259e1d23b0f433b1f06e1b753110bb33e77a79bd8ea54cbd0b5df15
 # python-dateutil is required by elasticsearch-dsl
 python-dateutil==2.6.0 \
     --hash=sha256:62a2f8df3d66f878373fd0072eacf4ee52194ba302e00082828e0d263b0418d2 \
